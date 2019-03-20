@@ -21,6 +21,7 @@ server.get('/api/users', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
+  // ADD .catch
 })
 
 // GET By ID
@@ -30,9 +31,28 @@ server.get('/api/users/:id', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
+  // ADD .catch
 })
-//getById()
+
 // POST
+server.post('/api/users', (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    res.status(400).json({ 
+      errorMessage: "Please provide the name of the new user!"
+    })
+  } else {
+    Users.insert(req.body)
+      .then(data => {
+        res.status(201).json({ ...data, name });
+      })
+      .catch(() => {
+        res.status(500).json({
+          error: "There was an error while saving the post to the database"
+        })
+      })
+  }
+})
 //insert()
 // PUT
 //update()
@@ -48,6 +68,7 @@ server.get('/api/posts', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
+  // ADD .catch
 })
 
 // GET By ID
@@ -57,6 +78,7 @@ server.get('/api/posts/:id', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
+  // ADD .catch
 })
 
 // POST
@@ -70,14 +92,12 @@ server.get('/api/posts/:id', (req, res) => {
 // Create a GET to retrieve all posts from user with :id
 server.get('/api/users/:id/posts', (req, res) => {
   const { id } = req.params;
+  // Check if user with id exists.
   Users.getUserPosts(id)
   .then(data => {
     res.status(200).json(data);
   })
+  // ADD .catch
 }) 
-
-
-//    /api/user/1
-
 
 module.exports = server;
