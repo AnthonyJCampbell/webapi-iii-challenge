@@ -47,7 +47,7 @@ server.get('/api/users/:id', (req, res) => {
 })
 
 // POST
-server.post('/api/users', (req, res) => {
+server.post('/api/users', capitalize, (req, res) => {
   const { name } = req.name;
   if (!name) {
     res.status(400).json({ 
@@ -67,7 +67,7 @@ server.post('/api/users', (req, res) => {
 })
 
 // PUT
-server.put('/api/users/:id', (req, res) => {
+server.put('/api/users/:id', capitalize, (req, res) => {
   const id = req.params.id;
   const name = req.name;
   console.log(req.body)
