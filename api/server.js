@@ -9,7 +9,15 @@ const Posts = require('./../data/helpers/postDb');
 // Middleware
 server.use(express.json());
 server.use(morgan('short'));
-// WRITE CUSTOM MIDDLEWARE TO UPPERCASE USER'S NAME BEFORE A REQUEST REACHES POST OR PUT HANDLERS
+server.use(capitalize)
+
+//Takes name and capitalizes it in POST and PUT Requests"
+function capitalize(req, res, next) {
+  const name = req.body.name;
+  holder = { name: name.toUpperCase() };
+  req.name = holder;
+  next(); 
+}
 
 //// Routes
 
@@ -40,7 +48,7 @@ server.get('/api/users/:id', (req, res) => {
 
 // POST
 server.post('/api/users', (req, res) => {
-  const { name } = req.body;
+  const { name } = req.name;
   if (!name) {
     res.status(400).json({ 
       errorMessage: "Please provide the name of the new user!"
@@ -61,7 +69,7 @@ server.post('/api/users', (req, res) => {
 // PUT
 server.put('/api/users/:id', (req, res) => {
   const id = req.params.id;
-  const name = req.body;
+  const name = req.name;
   console.log(req.body)
   if (!name) {
     res.status(400).json({ 
@@ -86,9 +94,14 @@ server.put('/api/users/:id', (req, res) => {
 
 
 // DELETE
-server.delete("/api/users/:id", (req, res) => {
-  Users.remove(req.params.id)
-  .then(data => {
+server.delete("/:id", async (req, res) => {
+  // need to delete the posts
+  const posts = await Users.getUserPosts(req.params.id)
+  await posts.forEach( async (post) => {
+    await Posts.remove(post.id)
+  });
+  User.remove(req.params.id)
+  .then( data => {
     if(!data){
       res.status(404).json({message: "That user does not exist"})
     }else {
