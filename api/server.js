@@ -48,16 +48,54 @@ server.post('/api/users', (req, res) => {
       })
       .catch(() => {
         res.status(500).json({
-          error: "There was an error while saving the post to the database"
+          error: "There was an error while saving the user to the database"
         })
       })
   }
 })
-//insert()
+
 // PUT
-//update()
+server.put('/api/users/:id', (req, res) => {
+  const id = req.params.id;
+  const name = req.body;
+  console.log(req.body)
+  if (!name) {
+    res.status(400).json({ 
+      errorMessage: "Please provide new name for your users." 
+    })
+  } else {
+    Users.update(id, name)
+      .then(data => {
+        if(data) {
+          res.status(202).json({...name, id});
+        } else {
+          res.status(404).json({ 
+            message: "The user with the specified ID does not exist." 
+          })
+        }
+      })
+      .catch(err => {
+        res.status(500).json({ error: "The user information could not be modified." })
+      })
+  }
+})
+
+
 // DELETE
-//remove()
+server.delete("/api/users/:id", (req, res) => {
+  Users.remove(req.params.id)
+  .then(data => {
+    if(!data){
+      res.status(404).json({message: "That user does not exist"})
+    }else {
+      res.status(202).json({message: "User was deleted", id: req.params.id})
+    }
+  })
+  .catch( err => {
+    console.log(err)
+    res.status(500).json({message: "server error", error: err})
+  })
+})
 
 
 // POSTS
