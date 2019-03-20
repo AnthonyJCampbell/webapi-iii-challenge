@@ -21,7 +21,9 @@ server.get('/api/users', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  // ADD .catch
+  .catch(err => {
+    res.status(500).json({ error: "The user could not be retrieved." })
+  });
 })
 
 // GET By ID
@@ -31,7 +33,9 @@ server.get('/api/users/:id', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  // ADD .catch
+  .catch(err => {
+    res.status(500).json({ error: "The user's information could not be retrieved." })
+  });
 })
 
 // POST
@@ -105,7 +109,9 @@ server.get('/api/posts', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  // ADD .catch
+  .catch(err => {
+    res.status(500).json({ error: "The posts info could not be retrieved." })
+  });
 })
 
 // GET By ID
@@ -115,7 +121,9 @@ server.get('/api/posts/:id', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  // ADD .catch
+  .catch(err => {
+    res.status(500).json({ error: "The post could not be retrieved." })
+  });
 })
 
 // POST
@@ -140,26 +148,18 @@ server.post('/api/posts', (req, res) => {
 
 // PUT
 server.put('/api/posts/:id', (req, res) => {
-  const id = req.params.id;
   const { text, user_id } = req.body;
-  console.log(req.body)
-  if (!name) {
+  if (!text || !user_id) {
     res.status(400).json({ 
-      errorMessage: "Please provide new name for your users." 
+      message: "A text and user_id is required" 
     })
   } else {
-    Users.update(id, name)
+    Posts.update(req.params.id, req.body)
       .then(data => {
-        if(data) {
-          res.status(202).json({...name, id});
-        } else {
-          res.status(404).json({ 
-            message: "The user with the specified ID does not exist." 
-          })
-        }
+          res.status(200).json({...req.body, id: req.params.id});
       })
       .catch(err => {
-        res.status(500).json({ error: "The user information could not be modified." })
+        res.status(500).json({ message: "Server error", error: err })
       })
   }
 })
@@ -169,9 +169,9 @@ server.delete('/api/posts/:id', (req, res) => {
   Posts.remove(req.params.id)
   .then(data => {
     if(!data){
-      res.status(404).json({message: "That user does not exist"})
+      res.status(404).json({message: "That Post does not exist"})
     }else {
-      res.status(202).json({message: "User was deleted", id: req.params.id})
+      res.status(202).json({message: "Post was deleted", id: req.params.id})
     }})
     .catch( err => {
       res.status(500).json({message: "server error", error: err})
