@@ -11,10 +11,10 @@ server.use(express.json());
 server.use(morgan('short'));
 // WRITE CUSTOM MIDDLEWARE TO UPPERCASE USER'S NAME BEFORE A REQUEST REACHES POST OR PUT HANDLERS
 
-// Routes
-//
+//// Routes
+
 // USERS
-//
+
 // GET
 server.get('/api/users', (req, res) => {
   Users.get()  
@@ -24,16 +24,24 @@ server.get('/api/users', (req, res) => {
 })
 
 // GET By ID
-
+server.get('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  Users.getById(id)
+  .then(data => {
+    res.status(200).json(data);
+  })
+})
+//getById()
 // POST
-
+//insert()
 // PUT
-
+//update()
 // DELETE
+//remove()
 
-//
+
 // POSTS
-//
+
 // GET
 server.get('/api/posts', (req, res) => {
   Posts.get()
@@ -43,6 +51,13 @@ server.get('/api/posts', (req, res) => {
 })
 
 // GET By ID
+server.get('/api/posts/:id', (req, res) => {
+  const { id } = req.params;
+  Posts.getById(id)
+  .then(data => {
+    res.status(200).json(data);
+  })
+})
 
 // POST
 
