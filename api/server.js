@@ -92,7 +92,6 @@ server.delete("/api/users/:id", (req, res) => {
     }
   })
   .catch( err => {
-    console.log(err)
     res.status(500).json({message: "server error", error: err})
   })
 })
@@ -140,9 +139,44 @@ server.post('/api/posts', (req, res) => {
 })
 
 // PUT
+server.put('/api/posts/:id', (req, res) => {
+  const id = req.params.id;
+  const { text, user_id } = req.body;
+  console.log(req.body)
+  if (!name) {
+    res.status(400).json({ 
+      errorMessage: "Please provide new name for your users." 
+    })
+  } else {
+    Users.update(id, name)
+      .then(data => {
+        if(data) {
+          res.status(202).json({...name, id});
+        } else {
+          res.status(404).json({ 
+            message: "The user with the specified ID does not exist." 
+          })
+        }
+      })
+      .catch(err => {
+        res.status(500).json({ error: "The user information could not be modified." })
+      })
+  }
+})
 
 // DELETE
-
+server.delete('/api/posts/:id', (req, res) => {
+  Posts.remove(req.params.id)
+  .then(data => {
+    if(!data){
+      res.status(404).json({message: "That user does not exist"})
+    }else {
+      res.status(202).json({message: "User was deleted", id: req.params.id})
+    }})
+    .catch( err => {
+      res.status(500).json({message: "server error", error: err})
+    })
+})
 
 
 // Create a GET to retrieve all posts from user with :id
@@ -153,7 +187,11 @@ server.get('/api/users/:id/posts', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  // ADD .catch
+  .catch(err => {
+    res.status(404).json({ 
+      message: "The user with the specified ID does not exist." 
+    })
+  })
 }) 
 
 module.exports = server;
