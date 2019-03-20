@@ -12,16 +12,45 @@ server.use(morgan('short'));
 // WRITE CUSTOM MIDDLEWARE TO UPPERCASE USER'S NAME BEFORE A REQUEST REACHES POST OR PUT HANDLERS
 
 // Routes
-// FIRST DO CRUD ON USERS AND POSTS!
+//
 // USERS
-server.get('/api/user', (req, res) => {
-  
-  // .then(data => {
-  //   res.status(200).json(data);
-  // })
+//
+// GET
+server.get('/api/users', (req, res) => {
+  Users.get()  
+  .then(data => {
+    res.status(200).json(data);
+  })
 })
 
+// GET By ID
+
+// POST
+
+// PUT
+
+// DELETE
+
+//
 // POSTS
+//
+// GET
+server.get('/api/posts', (req, res) => {
+  Posts.get()
+  .then(data => {
+    res.status(200).json(data);
+  })
+})
+
+// GET By ID
+
+// POST
+
+// PUT
+
+// DELETE
+
+
 
 // Create a GET to retrieve all posts from user with :id
 server.get('/api/users/:id/posts', (req, res) => {
