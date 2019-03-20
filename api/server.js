@@ -82,6 +82,24 @@ server.get('/api/posts/:id', (req, res) => {
 })
 
 // POST
+server.post('/api/posts', (req, res) => {
+  const { text, user_id } = req.body;
+  if (!text || !user_id) {
+    res.status(400).json({ 
+      errorMessage: "Please provide the text of the new post and to whom it belongs! HINT: Check what the user_id is of to whom it belongs"
+    })
+  } else {
+    Posts.insert(req.body)
+      .then(data => {
+        res.status(201).json({ ...data, text, user_id });
+      })
+      .catch(() => {
+        res.status(500).json({
+          error: "There was an error while saving the post to the database"
+        })
+      })
+  }
+})
 
 // PUT
 
